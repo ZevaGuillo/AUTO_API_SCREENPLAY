@@ -1,50 +1,65 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Ticketing API Automation Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Screenplay Pattern
+All test automation MUST follow the Screenplay Pattern with clear separation of Abilities, Tasks, Interactions, and Questions. Each layer MUST have single responsibility: Abilities represent actor capabilities, Tasks represent business actions, Interactions handle technical HTTP operations, and Questions validate responses.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Serenity BDD Integration
+All tests MUST use Serenity BDD for reporting and living documentation. Tests MUST produce actionable reports with screen capturing for failures and clear step-by-step trace of user journeys.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Test-First BDD Approach
+All test scenarios MUST be written in Gherkin format (Cucumber) before implementation. Feature files MUST contain business-readable scenarios that map directly to acceptance criteria.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Service Layer Abstraction
+HTTP communication MUST be abstracted through custom Interactions layer. Direct REST calls in step definitions are prohibited; all requests MUST go through reusable Interaction classes (PostRequest, GetRequest, PutRequest).
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Single Responsibility Tasks
+Each Task class MUST represent exactly one business action. Composite workflows MUST be orchestrated by combining individual Tasks. Task classes MUST NOT mix multiple operations.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Technology Stack
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+**Language**: Java 11+
+**Framework**: Serenity BDD 4.1.0
+**Pattern**: Screenplay Pattern
+**API Testing**: Serenity Rest (RestAssured 5.4.0)
+**Build Tool**: Gradle
+**BDD**: Cucumber
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Project Structure
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+The project MUST follow this structure:
+
+```
+src/test/java/com/ticketing/
+├── abilities/          # Actor capabilities (CallCatalogApi, etc.)
+├── tasks/             # Business actions (CreateEvent, GetEventById, etc.)
+├── interactions/      # HTTP operations (PostRequest, GetRequest, etc.)
+├── questions/         # Response validations (ResponseStatus, JsonPathValue, etc.)
+├── models/            # Data models (Event, etc.)
+├── stepdefinitions/   # Cucumber step definitions
+└── runners/           # Test runners
+```
+
+## Development Workflow
+
+All test automation MUST:
+1. Define feature scenarios in Gherkin (.feature files)
+2. Implement Step Definitions using Task classes
+3. Create reusable Tasks for business actions
+4. Build Interaction layer for HTTP operations
+5. Add Questions for response validation
+6. Execute via CucumberWithSerenity runner
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**Constitution Version**: This constitution supersedes all other practices.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendments**: Any changes to this constitution MUST be documented with:
+- Reason for change
+- Impact assessment
+- Migration plan if needed
+
+**Compliance**: All PRs and reviews MUST verify alignment with these principles. Complexity beyond these guidelines MUST be justified in documentation.
+
+**Version**: 1.0.0 | **Ratified**: 2026-03-19 | **Last Amended**: 2026-03-19
