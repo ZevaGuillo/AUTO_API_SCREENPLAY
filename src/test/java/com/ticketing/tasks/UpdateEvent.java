@@ -1,5 +1,6 @@
 package com.ticketing.tasks;
 
+import com.ticketing.config.Endpoints;
 import com.ticketing.models.Event;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.rest.interactions.Put;
@@ -23,7 +24,7 @@ public class UpdateEvent implements Task {
     @Override
     public <T extends net.serenitybdd.screenplay.Actor> void performAs(T actor) {
         actor.attemptsTo(
-            Put.to("/admin/events/{id}")
+            Put.to(Endpoints.UPDATE_EVENT)
                 .with(req -> req
                     .pathParam("id", eventId)
                     .contentType(ContentType.JSON)

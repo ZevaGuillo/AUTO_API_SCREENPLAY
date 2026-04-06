@@ -1,5 +1,6 @@
 package com.ticketing.tasks;
 
+import com.ticketing.config.Endpoints;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.rest.interactions.Get;
 import io.restassured.http.ContentType;
@@ -20,7 +21,7 @@ public class GetEvent implements Task {
     @Override
     public <T extends net.serenitybdd.screenplay.Actor> void performAs(T actor) {
         actor.attemptsTo(
-            Get.resource("/events/{id}")
+            Get.resource(Endpoints.GET_EVENT)
                 .with(req -> req
                     .pathParam("id", eventId)
                     .accept(ContentType.JSON.toString()))

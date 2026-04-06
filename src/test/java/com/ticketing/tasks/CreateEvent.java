@@ -1,5 +1,6 @@
 package com.ticketing.tasks;
 
+import com.ticketing.config.Endpoints;
 import com.ticketing.models.Event;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.rest.interactions.Post;
@@ -21,7 +22,7 @@ public class CreateEvent implements Task {
     @Override
     public <T extends net.serenitybdd.screenplay.Actor> void performAs(T actor) {
         actor.attemptsTo(
-            Post.to("/admin/events")
+            Post.to(Endpoints.CREATE_EVENT)
                 .with(req -> req
                     .contentType(ContentType.JSON)
                     .accept(ContentType.JSON)

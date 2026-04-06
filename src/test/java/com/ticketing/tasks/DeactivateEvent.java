@@ -1,5 +1,6 @@
 package com.ticketing.tasks;
 
+import com.ticketing.config.Endpoints;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.rest.interactions.Post;
 import io.restassured.http.ContentType;
@@ -20,7 +21,7 @@ public class DeactivateEvent implements Task {
     @Override
     public <T extends net.serenitybdd.screenplay.Actor> void performAs(T actor) {
         actor.attemptsTo(
-            Post.to("/admin/events/{id}/deactivate")
+            Post.to(Endpoints.DEACTIVATE_EVENT)
                 .with(req -> req
                     .pathParam("id", eventId)
                     .contentType(ContentType.JSON)

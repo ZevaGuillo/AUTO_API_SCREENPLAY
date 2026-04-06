@@ -1,5 +1,6 @@
 package com.ticketing.stepdefinitions;
 
+import com.ticketing.config.TestData;
 import com.ticketing.models.Event;
 import com.ticketing.questions.EventField;
 import com.ticketing.questions.ResponseStatus;
@@ -26,15 +27,22 @@ public class EventLifecycleSteps {
         OnStage.theActorCalled("User");
     }
 
+    @Given("an event has been created")
+    public void anEventHasBeenCreated() {
+        adminCreatesNewEvent();
+        eventShouldBeCreatedSuccessfully();
+    }
+
+    @Given("the event has been deactivated")
+    public void theEventHasBeenDeactivated() {
+        OnStage.theActorCalled("Admin").attemptsTo(
+            DeactivateEvent.withId(storedEventId)
+        );
+    }
+
     @When("the admin creates a new event")
     public void adminCreatesNewEvent() {
-        eventToCreate = new Event();
-        eventToCreate.setName("Concert Test Event");
-        eventToCreate.setDescription("Test concert event");
-        eventToCreate.setEventDate("2026-12-31T22:00");
-        eventToCreate.setVenue("Test Arena");
-        eventToCreate.setMaxCapacity(5000);
-        eventToCreate.setBasePrice(99.99);
+        eventToCreate = TestData.createEventData();
         
         OnStage.theActorInTheSpotlight().attemptsTo(
             CreateEvent.withData(eventToCreate)
@@ -61,20 +69,14 @@ public class EventLifecycleSteps {
     public void eventDataShouldBeCorrect() {
         OnStage.theActorInTheSpotlight().attemptsTo(
             Ensure.that(ResponseStatus.code()).isEqualTo(200),
-            Ensure.that(EventField.value("name")).isEqualTo("Concert Test Event"),
-            Ensure.that(EventField.value("venue")).isEqualTo("Test Arena")
+            Ensure.that(EventField.value("name")).isEqualTo(eventToCreate.getName()),
+            Ensure.that(EventField.value("venue")).isEqualTo(eventToCreate.getVenue())
         );
     }
 
     @When("the admin updates the event information")
     public void adminUpdatesEventInformation() {
-        eventToUpdate = new Event();
-        eventToUpdate.setName("Updated Concert Event");
-        eventToUpdate.setDescription("Updated description");
-        eventToUpdate.setEventDate("2026-12-31T22:00");
-        eventToUpdate.setVenue("Updated Arena");
-        eventToUpdate.setMaxCapacity(6000);
-        eventToUpdate.setBasePrice(149.99);
+        eventToUpdate = TestData.updateEventData();
         
         OnStage.theActorCalled("Admin").attemptsTo(
             UpdateEvent.with(storedEventId, eventToUpdate)
@@ -85,9 +87,9 @@ public class EventLifecycleSteps {
     public void eventShouldReflectUpdatedData() {
         OnStage.theActorInTheSpotlight().attemptsTo(
             Ensure.that(ResponseStatus.code()).isEqualTo(200),
-            Ensure.that(EventField.value("name")).isEqualTo("Updated Concert Event"),
-            Ensure.that(EventField.value("description")).isEqualTo("Updated description"),
-            Ensure.that(EventField.value("maxCapacity")).isEqualTo("6000")
+            Ensure.that(EventField.value("name")).isEqualTo(eventToUpdate.getName()),
+            Ensure.that(EventField.value("description")).isEqualTo(eventToUpdate.getDescription()),
+            Ensure.that(EventField.value("maxCapacity")).isEqualTo(String.valueOf(eventToUpdate.getMaxCapacity()))
         );
     }
 
