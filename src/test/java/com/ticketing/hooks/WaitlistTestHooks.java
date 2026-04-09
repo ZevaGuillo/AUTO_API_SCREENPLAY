@@ -1,5 +1,6 @@
 package com.ticketing.hooks;
 
+import com.ticketing.config.AuthTokenHolder;
 import com.ticketing.config.Endpoints;
 import com.ticketing.config.WaitlistTestData;
 import io.cucumber.java.Before;
@@ -90,6 +91,7 @@ public class WaitlistTestHooks {
                 WaitlistTestData.TEST_USER_EMAIL,
                 WaitlistTestData.TEST_USER_PASSWORD);
         if (testUserToken != null) {
+            AuthTokenHolder.setUserToken(testUserToken);
             logger.info("Test user token cached for cleanup ✓");
         }
 
@@ -273,13 +275,19 @@ public class WaitlistTestHooks {
                 WaitlistTestData.WAITLIST_EVENT_BASE_PRICE);
 
         try {
-            HttpRequest request = HttpRequest.newBuilder()
+            HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(adminEventsUrl))
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
-                    .timeout(Duration.ofSeconds(WaitlistTestData.HTTP_TIMEOUT_SECONDS))
-                    .build();
+                    .timeout(Duration.ofSeconds(WaitlistTestData.HTTP_TIMEOUT_SECONDS));
+            String adminToken = AuthTokenHolder.getAdminToken();
+            if (adminToken != null) {
+                reqBuilder.header("Authorization", "Bearer " + adminToken);
+            } else if (testUserToken != null) {
+                reqBuilder.header("Authorization", "Bearer " + testUserToken);
+            }
+            HttpRequest request = reqBuilder.build();
 
             HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
@@ -314,13 +322,19 @@ public class WaitlistTestHooks {
                 + "{\"sectionCode\":\"General\",\"rows\":10,\"seatsPerRow\":20,\"priceMultiplier\":1.0}"
                 + "]}";
         try {
-            HttpRequest request = HttpRequest.newBuilder()
+            HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(seatsUrl))
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(body))
-                    .timeout(Duration.ofSeconds(WaitlistTestData.HTTP_TIMEOUT_SECONDS))
-                    .build();
+                    .timeout(Duration.ofSeconds(WaitlistTestData.HTTP_TIMEOUT_SECONDS));
+            String adminToken = AuthTokenHolder.getAdminToken();
+            if (adminToken != null) {
+                reqBuilder.header("Authorization", "Bearer " + adminToken);
+            } else if (testUserToken != null) {
+                reqBuilder.header("Authorization", "Bearer " + testUserToken);
+            }
+            HttpRequest request = reqBuilder.build();
             HttpResponse<String> response = HTTP.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
             if (status >= 200 && status < 300) {
@@ -357,6 +371,7 @@ public class WaitlistTestHooks {
                     .uri(URI.create(cancelUrl))
                     .header("X-User-Id", userId)
                     .header("Accept", "application/json")
+                    .header("Authorization", "Bearer " + userToken)
                     .DELETE()
                     .timeout(Duration.ofSeconds(WaitlistTestData.HTTP_TIMEOUT_SECONDS))
                     .build();

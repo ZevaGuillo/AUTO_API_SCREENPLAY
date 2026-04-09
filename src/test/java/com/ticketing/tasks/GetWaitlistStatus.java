@@ -16,15 +16,17 @@ public class GetWaitlistStatus implements Task {
     private final String userId;
     private final String eventId;
     private final String section;
+    private final String token;
 
-    public GetWaitlistStatus(String userId, String eventId, String section) {
+    public GetWaitlistStatus(String userId, String eventId, String section, String token) {
         this.userId = userId;
         this.eventId = eventId;
         this.section = section;
+        this.token = token;
     }
 
-    public static GetWaitlistStatus forUser(String userId, String eventId, String section) {
-        return instrumented(GetWaitlistStatus.class, userId, eventId, section);
+    public static GetWaitlistStatus forUser(String userId, String eventId, String section, String token) {
+        return instrumented(GetWaitlistStatus.class, userId, eventId, section, token);
     }
 
     @Override
@@ -34,6 +36,7 @@ public class GetWaitlistStatus implements Task {
                         .with(req -> req
                                 .accept(ContentType.JSON.toString())
                                 .header("X-User-Id", userId)
+                                .header("Authorization", "Bearer " + token)
                                 .queryParam("eventId", eventId)
                                 .queryParam("section", section))
         );

@@ -1,5 +1,6 @@
 package com.ticketing.tasks;
 
+import com.ticketing.config.AuthTokenHolder;
 import com.ticketing.config.Endpoints;
 import com.ticketing.models.Event;
 import net.serenitybdd.screenplay.Task;
@@ -23,12 +24,14 @@ public class UpdateEvent implements Task {
     
     @Override
     public <T extends net.serenitybdd.screenplay.Actor> void performAs(T actor) {
+        String token = AuthTokenHolder.getAdminToken();
         actor.attemptsTo(
             Put.to(Endpoints.UPDATE_EVENT)
                 .with(req -> req
                     .pathParam("id", eventId)
                     .contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
+                    .header("Authorization", "Bearer " + token)
                     .body(event))
         );
     }

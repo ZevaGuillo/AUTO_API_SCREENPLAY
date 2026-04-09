@@ -1,5 +1,6 @@
 package com.ticketing.tasks;
 
+import com.ticketing.config.AuthTokenHolder;
 import com.ticketing.config.Endpoints;
 import com.ticketing.models.Event;
 import net.serenitybdd.screenplay.Task;
@@ -21,11 +22,13 @@ public class CreateEvent implements Task {
     
     @Override
     public <T extends net.serenitybdd.screenplay.Actor> void performAs(T actor) {
+        String token = AuthTokenHolder.getAdminToken();
         actor.attemptsTo(
             Post.to(Endpoints.CREATE_EVENT)
                 .with(req -> req
                     .contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
+                    .header("Authorization", "Bearer " + token)
                     .body(event))
         );
     }

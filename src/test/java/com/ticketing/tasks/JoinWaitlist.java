@@ -16,15 +16,17 @@ public class JoinWaitlist implements Task {
     private final String userId;
     private final String eventId;
     private final String section;
+    private final String token;
 
-    public JoinWaitlist(String userId, String eventId, String section) {
+    public JoinWaitlist(String userId, String eventId, String section, String token) {
         this.userId = userId;
         this.eventId = eventId;
         this.section = section;
+        this.token = token;
     }
 
-    public static JoinWaitlist forUser(String userId, String eventId, String section) {
-        return instrumented(JoinWaitlist.class, userId, eventId, section);
+    public static JoinWaitlist forUser(String userId, String eventId, String section, String token) {
+        return instrumented(JoinWaitlist.class, userId, eventId, section, token);
     }
 
     @Override
@@ -39,6 +41,7 @@ public class JoinWaitlist implements Task {
                                 .contentType(ContentType.JSON)
                                 .accept(ContentType.JSON)
                                 .header("X-User-Id", userId)
+                                .header("Authorization", "Bearer " + token)
                                 .body(body))
         );
     }

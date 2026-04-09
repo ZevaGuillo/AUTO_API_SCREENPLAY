@@ -16,15 +16,17 @@ public class CancelWaitlist implements Task {
     private final String userId;
     private final String eventId;
     private final String section;
+    private final String token;
 
-    public CancelWaitlist(String userId, String eventId, String section) {
+    public CancelWaitlist(String userId, String eventId, String section, String token) {
         this.userId = userId;
         this.eventId = eventId;
         this.section = section;
+        this.token = token;
     }
 
-    public static CancelWaitlist forUser(String userId, String eventId, String section) {
-        return instrumented(CancelWaitlist.class, userId, eventId, section);
+    public static CancelWaitlist forUser(String userId, String eventId, String section, String token) {
+        return instrumented(CancelWaitlist.class, userId, eventId, section, token);
     }
 
     @Override
@@ -34,6 +36,7 @@ public class CancelWaitlist implements Task {
                         .with(req -> req
                                 .accept(ContentType.JSON)
                                 .header("X-User-Id", userId)
+                                .header("Authorization", "Bearer " + token)
                                 .queryParam("eventId", eventId)
                                 .queryParam("section", section))
         );

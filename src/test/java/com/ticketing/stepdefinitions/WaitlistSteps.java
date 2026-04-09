@@ -1,5 +1,6 @@
 package com.ticketing.stepdefinitions;
 
+import com.ticketing.config.AuthTokenHolder;
 import com.ticketing.config.WaitlistTestData;
 import com.ticketing.questions.ResponseStatus;
 import com.ticketing.tasks.CancelWaitlist;
@@ -16,6 +17,7 @@ import net.serenitybdd.screenplay.rest.questions.LastResponse;
 public class WaitlistSteps {
 
     private String activeUserId;
+    private String activeToken;
 
     // ═══════════════════════════════════════════════════════════════════
     // CP_API_WL_JOIN_01 — Join Waitlist Happy Path
@@ -25,6 +27,7 @@ public class WaitlistSteps {
     public void elUsuarioTieneUnXUserIdValido() {
         OnStage.theActorCalled("WaitlistUser");
         activeUserId = WaitlistTestData.getTestUserId();
+        activeToken = AuthTokenHolder.getUserToken();
     }
 
     @Given("existe un evento válido con sección {string}")
@@ -42,7 +45,8 @@ public class WaitlistSteps {
                 JoinWaitlist.forUser(
                         activeUserId,
                         WaitlistTestData.getEventId(),
-                        WaitlistTestData.WAITLIST_EVENT_SECTION)
+                        WaitlistTestData.WAITLIST_EVENT_SECTION,
+                        activeToken)
         );
     }
 
@@ -82,6 +86,7 @@ public class WaitlistSteps {
     public void elUsuarioNoEstaEnLaWaitlist() {
         OnStage.theActorCalled("NonExistentUser");
         activeUserId = WaitlistTestData.NON_EXISTENT_USER_ID;
+        activeToken = AuthTokenHolder.getAdminToken();
     }
 
     @When("intenta cancelar")
@@ -90,7 +95,8 @@ public class WaitlistSteps {
                 CancelWaitlist.forUser(
                         activeUserId,
                         WaitlistTestData.getEventId(),
-                        WaitlistTestData.WAITLIST_EVENT_SECTION)
+                        WaitlistTestData.WAITLIST_EVENT_SECTION,
+                        activeToken)
         );
     }
 
@@ -102,6 +108,7 @@ public class WaitlistSteps {
     public void elUsuarioNoEstaRegistradoEnLaWaitlist() {
         OnStage.theActorCalled("UnregisteredUser");
         activeUserId = WaitlistTestData.NON_EXISTENT_USER_ID;
+        activeToken = AuthTokenHolder.getAdminToken();
     }
 
     @When("consulta su estado")
@@ -110,7 +117,8 @@ public class WaitlistSteps {
                 GetWaitlistStatus.forUser(
                         activeUserId,
                         WaitlistTestData.getEventId(),
-                        WaitlistTestData.WAITLIST_EVENT_SECTION)
+                        WaitlistTestData.WAITLIST_EVENT_SECTION,
+                        activeToken)
         );
     }
 
